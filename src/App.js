@@ -42,20 +42,24 @@ class App extends React.Component {
   }
 
   toggleSelected(event) {
-    if (this.state.selected === event.target.key) {
-      this.setState({...this.state, selected: null});
-      event.target.className = 'chart';
-      // console.log('unselected', event.target)
+    if (this.state.selected === event.target.parentElement.id) {
+      console.log('if')
+      // this.setState({...this.state, selected: null});
+      // event.target.parentElement.className = 'chart'
+      // event.target.parentElement.parentElement.className = 'chartsContainer'
     } else {
-      this.setState({...this.state, selected: event.target.key});
-      event.target.parentElement.childNodes.forEach(node => node.className = 'chart')
-      event.target.className = 'selected'
-      // console.log('selected', event.target)
+      console.log('else')
+      console.log('id', event.target.parentElement.id)
+      this.setState({...this.state, selected: event.target.parentElement.id});
+      // event.target.parentElement.parentElement.childNodes.forEach(node => node.className = 'chart')
+      // event.target.parentElement.className = 'selected'
+      // event.target.parentElement.parentElement.className = 'singleChart'
     }
+    // setTimeout(console.log(this.state, 'state after timeout'), 2000)
   }
 
   render() {
-    if (this.props.scorecard.results) {
+    if (this.props.scorecard.results && this.state) {
       let school = this.props.scorecard.results[0].school; 
       let stats = this.props.scorecard.results[0].latest;
       return (
@@ -69,12 +73,25 @@ class App extends React.Component {
           </div>
           <div>
             {stats.student.size.toLocaleString()}
+            {this.state.selected ?
+            <div>
+              {
+                <div>
+                  {/*on click make it go back to single view
+                  set keys info on left hand side*/}
+                  <div key={this.state.selected} id={this.state.selected}>{this.state.selected}<Doughnut data={this.dataProcesser(this.state.selected)} /></div>
+                </div>
+              }
+            </div>
+            :
             <div className='chartsContainer'>
+              {console.log('does this work?', this.state.selected)}
               {['program', 'race_ethnicity', 'title_iv'].map(content => {
                 let data = this.dataProcesser(content)
-                return <div key={content} className='chart' onClick={(event) => this.toggleSelected(event)}>{content}<Doughnut data={data} options={{legend: false}} /></div>
+                return <div key={content} className='chart' id = {content} onClick={(event) => this.toggleSelected(event)}>{content}<Doughnut data={data} options={{legend: false}} /></div>
               })}
-            </div>
+            </div> 
+            }
           </div>
           <div>
             <button>Save as PDF</button>
@@ -104,4 +121,3 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
-// export default App

@@ -2,8 +2,12 @@
   display: flex;
 }
 
+.singleChart {
+  width: 100vw;
+}
+
 .chart {
-  /* justify-content: space-between; */
+  justify-content: space-between;
   width: 33vw;
 }
 
