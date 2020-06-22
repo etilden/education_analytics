@@ -45,7 +45,6 @@ class App extends React.Component {
     if (this.state.selected === event.target.parentElement.id) {
       this.setState({...this.state, selected: null});
     } else {
-      console.log('id', event.target.parentElement.id)
       this.setState({...this.state, selected: event.target.parentElement.id});
     }
   }
@@ -69,7 +68,6 @@ class App extends React.Component {
             <div>
               {
                 <div>
-                  {/*on click make it go back to single view*/}
                   <div key={this.state.selected} id={this.state.selected} onClick={(event) => this.toggleSelected(event)}>{this.state.selected}<Doughnut data={this.dataProcesser(this.state.selected)} options={{legend: {position: 'left'}}}/></div>
                 </div>
               }
