@@ -14,16 +14,35 @@ class App extends React.Component {
     this.props.fetchScorecardData(); 
   }
 
-  dataProcesser(content) {
-    let data = content === 'program' ? this.props.scorecard.results[0].latest.academics.program_percentage : content === 'race_ethnicity' ?  this.props.scorecard.results[0].latest.student.demographics.race_ethnicity : this.props.scorecard.results[0].latest.completion.title_iv.completed_by
-    //then process this data so that it is appropriate for the doughnut graph needs
+  dataProcesser(contentType) {
+    console.log('awooga', contentType)
+    let stats = this.props.scorecard.results[0].latest;
+    let content = contentType === 'program' ? stats.academics.program_percentage : 
+      contentType === 'race_ethnicity' ?  stats.student.demographics.race_ethnicity : 
+      stats.completion.title_iv.completed_by;
+      let data = {
+        labels: [],
+        datasets:[{
+          data: [],
+          borderColor: '#FFFFFF',
+          backgroundColor: [],
+          labels:'%'
+        }]
+      }
+      for (let key in content) {
+        if (content[key]) {
+          data.labels.push(key.split('_').map(word => word[0].toUpperCase() + word.slice(1, key.length)).join(' '));
+          data.datasets[0].data.push((content[key]*100).toFixed(2));
+          data.datasets[0].backgroundColor.push('#'+((1<<24)*(Math.random()+1)|0).toString(16).substr(1));
+        }
+      }
+    return data
   }
 
   render() {
     if (this.props.scorecard.results) {
-      console.log(this.props.scorecard.results[0].school, 'prahps')
       let school = this.props.scorecard.results[0].school; 
-      let stats = this.props.scorecard.results[0].latest
+      let stats = this.props.scorecard.results[0].latest;
       return (
         <div>
           <div>
@@ -36,11 +55,10 @@ class App extends React.Component {
           <div>
             {stats.student.size.toLocaleString()}
             {['program', 'race_ethnicity', 'title_iv'].map(content => {
-              <Doughnut data={(content) => this.dataProcesser(content)} />
+              let data = this.dataProcesser(content)
+              console.log(data)
+              return <div key={content}>{content}<Doughnut data={data} options={{legend: false}}/></div>
             })}
-            {/* {stats.academics.program_percentage} */}
-            {/* {stats.student.demographics.race_ethnicity} */}
-            {/* {stats.completion.title_iv.completed_by} */}
           </div>
           <div>
             <button>Save as PDF</button>
