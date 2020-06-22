@@ -7,7 +7,11 @@ import './App.css';
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      selected: null
+    }
     this.dataProcesser = this.dataProcesser.bind(this);
+    this.toggleSelected = this.toggleSelected.bind(this);
   }
 
   componentDidMount() {
@@ -15,7 +19,6 @@ class App extends React.Component {
   }
 
   dataProcesser(contentType) {
-    console.log('awooga', contentType)
     let stats = this.props.scorecard.results[0].latest;
     let content = contentType === 'program' ? stats.academics.program_percentage : 
       contentType === 'race_ethnicity' ?  stats.student.demographics.race_ethnicity : 
@@ -25,8 +28,7 @@ class App extends React.Component {
         datasets:[{
           data: [],
           borderColor: '#FFFFFF',
-          backgroundColor: [],
-          labels:'%'
+          backgroundColor: []
         }]
       }
       for (let key in content) {
@@ -37,6 +39,19 @@ class App extends React.Component {
         }
       }
     return data
+  }
+
+  toggleSelected(event) {
+    if (this.state.selected === event.target.key) {
+      this.setState({...this.state, selected: null});
+      event.target.className = 'chart';
+      // console.log('unselected', event.target)
+    } else {
+      this.setState({...this.state, selected: event.target.key});
+      event.target.parentElement.childNodes.forEach(node => node.className = 'chart')
+      event.target.className = 'selected'
+      // console.log('selected', event.target)
+    }
   }
 
   render() {
@@ -54,11 +69,12 @@ class App extends React.Component {
           </div>
           <div>
             {stats.student.size.toLocaleString()}
-            {['program', 'race_ethnicity', 'title_iv'].map(content => {
-              let data = this.dataProcesser(content)
-              console.log(data)
-              return <div key={content}>{content}<Doughnut data={data} options={{legend: false}}/></div>
-            })}
+            <div className='chartsContainer'>
+              {['program', 'race_ethnicity', 'title_iv'].map(content => {
+                let data = this.dataProcesser(content)
+                return <div key={content} className='chart' onClick={(event) => this.toggleSelected(event)}>{content}<Doughnut data={data} options={{legend: false}} /></div>
+              })}
+            </div>
           </div>
           <div>
             <button>Save as PDF</button>
