@@ -58,7 +58,7 @@ class App extends React.Component {
         <div className="app">
           <div>
             <div className='header'>
-              <h1>{school.name}</h1>
+              <h1>{school.name}</h1><h3>{`${stats.student.size.toLocaleString()} Students`}</h3>
               <h3>{school.alias ? school.alias : null}</h3>
             </div>
             <div className='sub-head-container'>
@@ -74,7 +74,6 @@ class App extends React.Component {
             </div>
           </div>
           <div>
-            <h3>{`${stats.student.size.toLocaleString()} Students`}</h3>
             {this.state.selected ?
             <div>
               {
@@ -83,12 +82,13 @@ class App extends React.Component {
                   key={this.state.selected} 
                   id={this.state.selected} 
                   onClick={(event) => this.toggleSelected(event)}>
-                    <h2 onMouseOver ={(event) => {event.target.className='bold'}}>{this.state.selected.split('_')
+                    {/* <h2 onMouseOver ={(event) => {event.target.className='bold'}}>{this.state.selected.split('_')
                       .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}
-                    </h2>
+                    </h2> */}
                     <Doughnut 
                       data={this.dataProcesser(this.state.selected)} 
-                      options={{legend: {position: 'left'}}}
+                      options={{legend: {position: 'left'}, title: {display: true, text: this.state.selected.split('_')
+                      .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}}
                     />
                   </div>
                 </div>
@@ -103,11 +103,10 @@ class App extends React.Component {
                 className='chart' 
                 id = {content} 
                 onClick={(event) => this.toggleSelected(event)}>
-                  <h3 onMouseOver ={(event) => {event.target.className='bold'}}>{content.split('_')
-                  .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}</h3>
                   <Doughnut 
                     data={data} 
-                    options={{legend: false}} 
+                    options={{legend: false, title: {display: true, text: content.split('_')
+                    .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}} 
                   />
                 </div>
               })}
