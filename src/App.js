@@ -53,7 +53,7 @@ class App extends React.Component {
     if (this.props.scorecard.results && this.state) {
       let school = this.props.scorecard.results[0].school; 
       let stats = this.props.scorecard.results[0].latest;
-      let graphTopics = ['program', 'race_ethnicity', 'title_iv'];
+      let graphTopics = ['program', 'race /_ethnicity', 'title_iV'];
       return (
         <div className="app">
           <div>
