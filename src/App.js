@@ -2,6 +2,9 @@ import React from 'react';
 import { connect } from "react-redux";
 import { fetchScorecardData } from './store/data'
 import { Doughnut } from 'react-chartjs-2'
+import * as jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+import { CSVLink } from 'react-csv'
 import './App.css';
 
 class App extends React.Component {
@@ -12,6 +15,8 @@ class App extends React.Component {
     }
     this.dataProcesser = this.dataProcesser.bind(this);
     this.toggleSelected = this.toggleSelected.bind(this);
+    this.makePDF = this.makePDF.bind(this);
+    this.download = this.download.bind(this);
   }
 
   componentDidMount() {
@@ -47,6 +52,19 @@ class App extends React.Component {
     } else {
       this.setState({...this.state, selected: event.target.parentElement.id});
     }
+  }
+
+  async makePDF() {
+    html2canvas(document.getElementById('app')).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, 'PNG', 0, 0);
+      pdf.save("download.pdf"); 
+    });
+  }
+
+  download() {
+
   }
 
   render() {
@@ -124,8 +142,20 @@ class App extends React.Component {
             }
           </div>
           <div className='buttonContainer'>
-            <button>Save as PDF</button>
-            <button>Download Data</button>
+            <button type='button' onClick={() => this.makePDF()}>Save as PDF</button>
+            <button><CSVLink data = {[
+              {name: school.name}, 
+              {url: school.school_url}, 
+              {city: school.city}, 
+              {state: school.state}, 
+              {zip: school.zip}, 
+              {classSize: stats.student.size}, 
+              stats.academics.program_percentage, 
+              stats.student.demographics.race_ethnicity, 
+              stats.completion.title_iv.completed_by
+            ]}>
+              Download Data
+              </CSVLink></button>
             <button>Print Page</button>
           </div>
         </div>
