@@ -2,11 +2,10 @@ import React from 'react';
 import { connect } from "react-redux";
 import { fetchScorecardData } from './store/data'
 import { Doughnut } from 'react-chartjs-2'
-import * as jsPDF from 'jspdf'
+import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import { CSVLink } from 'react-csv'
 import './App.css';
-import PrintProvider, { Print, NoPrint } from 'react-easy-print';
 
 class App extends React.Component {
   constructor(props) {
@@ -17,7 +16,6 @@ class App extends React.Component {
     this.dataProcesser = this.dataProcesser.bind(this);
     this.toggleSelected = this.toggleSelected.bind(this);
     this.makePDF = this.makePDF.bind(this);
-    this.print = this.print.bind(this); 
   }
 
   componentDidMount() {
@@ -56,16 +54,14 @@ class App extends React.Component {
   }
 
   async makePDF() {
-    html2canvas(document.getElementById('app')).then(canvas => {
+    html2canvas(document.getElementsByClassName('app')[0]).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF();
-      pdf.addImage(imgData, 'PNG', 0, 0);
+      const pdf = new jsPDF('l', 'mm', 'a4');
+      this.state.selected ? 
+      pdf.addImage(imgData, 'PDF', 10, -80, 190, 130):
+      pdf.addImage(imgData, 'PDF', 10, 10, 190, 130);
       pdf.save("download.pdf"); 
     });
-  }
-
-  print() {
-
   }
 
   render() {
@@ -74,97 +70,93 @@ class App extends React.Component {
       let stats = this.props.scorecard.results[0].latest;
       let graphTopics = ['program', 'race /_ethnicity', 'title_iV'];
       return (
-        <PrintProvider>
-          <Print>
-
-            <div className="app">
-              <div>
-                <div className='header'>
-                  <h1>{school.name}</h1><h3>{`${stats.student.size.toLocaleString()} Students`}</h3>
-                  <h3>{school.alias ? school.alias : null}</h3>
-                </div>
-                <div className='sub-head-container'>
-                    <a 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    href = {`http://${school.school_url}`}
-                    className='left'
-                    >
-                      {school.school_url}
-                    </a>
-                    <p className='right'>{school.city}, {school.state}, {school.zip.split('-')[0]}</p>
-                </div>
-              </div>
-              <div>
-                {this.state.selected ?
+        <div className="app">
+          <div>
+            <div className='header'>
+              <h1>{school.name}</h1><h3>{`${stats.student.size.toLocaleString()} Students`}</h3>
+              <h3>{school.alias ? school.alias : null}</h3>
+            </div>
+            <div className='sub-head-container'>
+                <a 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                href = {`http://${school.school_url}`}
+                className='left'
+                >
+                  {school.school_url}
+                </a>
+                <p className='right'>{school.city}, {school.state}, {school.zip.split('-')[0]}</p>
+            </div>
+          </div>
+          <div>
+            {this.state.selected ?
+            <div>
+              {
                 <div>
-                  {
-                    <div>
-                      <div
-                      key={this.state.selected} 
-                      id={this.state.selected} 
-                      onClick={(event) => this.toggleSelected(event)}
-                      onMouseOver = {(event) => {event.target.className = event.target.className + ' bold'}}
-                      onMouseOut= {(event) => {event.target.className=event.target.className.split(' ').filter(name => name !== 'bold').join (' ')}}
-                      >
-                        {window.screen.width <= 400 ? 
-                          <Doughnut 
-                          data={this.dataProcesser(this.state.selected)} 
-                          options={{legend: false, title: {display: true, text: this.state.selected.split('_')
-                          .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}}
-                          /> :
-                          <Doughnut 
-                            data={this.dataProcesser(this.state.selected)} 
-                            options={{legend: {position: 'left'}, title: {display: true, text: this.state.selected.split('_')
-                            .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}}
-                          />
-                        }
-                      </div>
-                    </div>
-                  }
-                </div>
-                :
-                <div className='chartsContainer'>
-                  {graphTopics.map(content => {
-                    let data = this.dataProcesser(content)
-                    return <div 
-                    key={content}
-                    className='chart' 
-                    id = {content} 
-                    onClick={(event) => this.toggleSelected(event)}
-                    onMouseOver = {(event) => {event.target.className = event.target.className + ' bold'}}
-                    onMouseOut= {(event) => {event.target.className=event.target.className.split(' ').filter(name => name !== 'bold').join (' ')}}
-                    >
+                  <div
+                  key={this.state.selected} 
+                  id={this.state.selected} 
+                  onClick={(event) => this.toggleSelected(event)}
+                  onMouseOver = {(event) => {event.target.className = event.target.className + ' bold'}}
+                  onMouseOut= {(event) => {event.target.className=event.target.className.split(' ').filter(name => name !== 'bold').join (' ')}}
+                  >
+                    {window.screen.width <= 400 ? 
                       <Doughnut 
-                        data={data} 
-                        options={{legend: false, title: {display: true, text: content.split('_')
+                      data={this.dataProcesser(this.state.selected)} 
+                      options={{legend: false, title: {display: true, text: this.state.selected.split('_')
+                      .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}}
+                      /> :
+                      <Doughnut 
+                        data={this.dataProcesser(this.state.selected)} 
+                        options={{legend: {position: 'left'}, title: {display: true, text: this.state.selected.split('_')
                         .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}}
                       />
-                    </div>
-                  })}
-                </div> 
-                }
-              </div>
-              <div className='buttonContainer'>
-                <button type='button' onClick={() => this.makePDF()}>Save as PDF</button>
-                <button><CSVLink data = {[
-                  {name: school.name}, 
-                  {url: school.school_url}, 
-                  {city: school.city}, 
-                  {state: school.state}, 
-                  {zip: school.zip}, 
-                  {classSize: stats.student.size}, 
-                  stats.academics.program_percentage, 
-                  stats.student.demographics.race_ethnicity, 
-                  stats.completion.title_iv.completed_by
-                ]}>
-                  Download Data
-                  </CSVLink></button>
-                <button type='button' onClick={() => window.print()}>Print Page</button>
-              </div>
+                    }
+                  </div>
+                </div>
+              }
             </div>
-          </Print>
-        </PrintProvider>
+            :
+            <div className='chartsContainer'>
+              {graphTopics.map(content => {
+                let data = this.dataProcesser(content)
+                return <div 
+                key={content}
+                className='chart' 
+                id = {content} 
+                onClick={(event) => this.toggleSelected(event)}
+                onMouseOver = {(event) => {event.target.className = event.target.className + ' bold'}}
+                onMouseOut= {(event) => {event.target.className=event.target.className.split(' ').filter(name => name !== 'bold').join (' ')}}
+                >
+                  <Doughnut 
+                    data={data} 
+                    options={{legend: false, title: {display: true, text: content.split('_')
+                    .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}}
+                  />
+                </div>
+              })}
+            </div> 
+            }
+          </div>
+          <div className='buttonContainer'>
+            {/* <button type='button' onClick={() => window.print()}>Save as PDF</button> */}
+            <button type='button' onClick={() => this.makePDF()}>Save as PDF</button>
+            <button><CSVLink data = {[
+              {name: school.name}, 
+              {url: school.school_url}, 
+              {city: school.city}, 
+              {state: school.state}, 
+              {zip: school.zip}, 
+              {classSize: stats.student.size}, 
+              stats.academics.program_percentage, 
+              stats.student.demographics.race_ethnicity, 
+              stats.completion.title_iv.completed_by
+            ]}>
+              Download Data
+              </CSVLink></button>
+            <button type='button' onClick={() => window.print()}>Print Page</button>
+          </div>
+        </div>
       );
     } else {
       return (
