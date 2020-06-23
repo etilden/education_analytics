@@ -2,15 +2,81 @@
   display: flex;
 }
 
-.singleChart {
-  width: 100vw;
-}
-
 .chart {
   justify-content: space-between;
   width: 33vw;
+  padding: 5px;
+  margin: 5px;
 }
 
 .selected {
   width: 100vw;
 }
+
+.app {
+  height: 100vh;
+  padding: 10vh;
+  color: rgb(63, 63, 63)
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.chartBox * {
+  background-color: rgb(247, 247, 247);
+}
+
+h3 {
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+.header {
+  text-align: center;
+  background-color: rgb(174, 198, 223);
+  padding: 2vh;
+  margin-bottom: 3vh;
+}
+
+.bold {
+  text-emphasis: bold;
+}
+
+.sub-head-container {
+  display: flex; 
+  justify-content: space-between;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: rgb(174, 198, 223);
+  padding: 2vw;
+  margin-top: 3vh;
+}
+
+button {
+  border: none;
+  outline: rgb(160, 197, 236);
+  padding: 2vh;
+  border-radius: 10px;
+  color: rgb(63, 63, 63);
+  font-weight: bold;
+  font-size: medium;
+  width: 15vw;
+  background-color: white;
+}
+
+@media screen and (max-width:320px) {
+  .chartBox * {
+    background-color: rgb(247, 247, 247);
+    flex-direction: column;
+  }
+}
+
+/* tomorrow to do: make mobile compatible */

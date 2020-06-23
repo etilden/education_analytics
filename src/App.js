@@ -29,7 +29,7 @@ class App extends React.Component {
           data: [],
           borderColor: '#FFFFFF',
           backgroundColor: []
-        }]
+        }],
       }
       for (let key in content) {
         if (content[key]) {
@@ -53,36 +53,68 @@ class App extends React.Component {
     if (this.props.scorecard.results && this.state) {
       let school = this.props.scorecard.results[0].school; 
       let stats = this.props.scorecard.results[0].latest;
+      let graphTopics = ['program', 'race_ethnicity', 'title_iv'];
       return (
-        <div>
+        <div className="app">
           <div>
-            <h1>{school.name}</h1>
-            <h3>{school.alias ? school.alias : null}</h3>
-            <a href = {school.school_url}>{school.school_url}</a>
-            <p>{school.city}, {school.state}</p>
-            <p>{school.zip}</p>
+            <div className='header'>
+              <h1>{school.name}</h1>
+              <h3>{school.alias ? school.alias : null}</h3>
+            </div>
+            <div className='sub-head-container'>
+                <a 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                href = {`http://${school.school_url}`}
+                className='left'
+                >
+                  {school.school_url}
+                </a>
+                <p className='right'>{school.city}, {school.state}, {school.zip.split('-')[0]}</p>
+            </div>
           </div>
           <div>
-            {stats.student.size.toLocaleString()}
+            <h3>{`${stats.student.size.toLocaleString()} Students`}</h3>
             {this.state.selected ?
             <div>
               {
                 <div>
-                  <div key={this.state.selected} id={this.state.selected} onClick={(event) => this.toggleSelected(event)}>{this.state.selected}<Doughnut data={this.dataProcesser(this.state.selected)} options={{legend: {position: 'left'}}}/></div>
+                  <div
+                  key={this.state.selected} 
+                  id={this.state.selected} 
+                  onClick={(event) => this.toggleSelected(event)}>
+                    <h2 onMouseOver ={(event) => {event.target.className='bold'}}>{this.state.selected.split('_')
+                      .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}
+                    </h2>
+                    <Doughnut 
+                      data={this.dataProcesser(this.state.selected)} 
+                      options={{legend: {position: 'left'}}}
+                    />
+                  </div>
                 </div>
               }
             </div>
             :
             <div className='chartsContainer'>
-              {console.log('does this work?', this.state.selected)}
-              {['program', 'race_ethnicity', 'title_iv'].map(content => {
+              {graphTopics.map(content => {
                 let data = this.dataProcesser(content)
-                return <div key={content} className='chart' id = {content} onClick={(event) => this.toggleSelected(event)}>{content}<Doughnut data={data} options={{legend: false}} /></div>
+                return <div 
+                key={content}
+                className='chart' 
+                id = {content} 
+                onClick={(event) => this.toggleSelected(event)}>
+                  <h3 onMouseOver ={(event) => {event.target.className='bold'}}>{content.split('_')
+                  .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}</h3>
+                  <Doughnut 
+                    data={data} 
+                    options={{legend: false}} 
+                  />
+                </div>
               })}
             </div> 
             }
           </div>
-          <div>
+          <div className='buttonContainer'>
             <button>Save as PDF</button>
             <button>Download Data</button>
             <button>Print Page</button>
@@ -91,7 +123,7 @@ class App extends React.Component {
       );
     } else {
       return (
-        <div>Loading...</div>
+        <div className="app">Loading...</div>
       )
     };
   }
