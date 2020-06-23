@@ -41,7 +41,7 @@ h2 {
 }
 
 .bold {
-  text-decoration: bold;
+  background-color: rgb(233, 243, 255);
 }
 
 .sub-head-container {
@@ -107,4 +107,4 @@ h2 {
   }  
 }
 
-/* tomorrow to do: make mobile compatible, do README*/
+/* to do: hover responsiveness, do README*/

@@ -81,7 +81,10 @@ class App extends React.Component {
                   <div
                   key={this.state.selected} 
                   id={this.state.selected} 
-                  onClick={(event) => this.toggleSelected(event)}>
+                  onClick={(event) => this.toggleSelected(event)}
+                  onMouseOver = {(event) => {event.target.className = event.target.className + ' bold'}}
+                  onMouseOut= {(event) => {event.target.className=event.target.className.split(' ').filter(name => name !== 'bold').join (' ')}}
+                  >
                     {window.screen.width <= 400 ? 
                       <Doughnut 
                       data={this.dataProcesser(this.state.selected)} 
@@ -106,14 +109,14 @@ class App extends React.Component {
                 key={content}
                 className='chart' 
                 id = {content} 
-                onClick={(event) => this.toggleSelected(event)}>
-                  {/* <h2 onMouseOver ={(event) => {event.target.className='bold'}}>{this.state.selected.split('_')
-                    .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}
-                  </h2> */}
+                onClick={(event) => this.toggleSelected(event)}
+                onMouseOver = {(event) => {event.target.className = event.target.className + ' bold'}}
+                onMouseOut= {(event) => {event.target.className=event.target.className.split(' ').filter(name => name !== 'bold').join (' ')}}
+                >
                   <Doughnut 
                     data={data} 
                     options={{legend: false, title: {display: true, text: content.split('_')
-                    .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}} 
+                    .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}}
                   />
                 </div>
               })}
