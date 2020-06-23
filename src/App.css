@@ -82,6 +82,11 @@ h2 {
   }  
 }
 
+.loading {
+  margin: 3vh; 
+  font-size: xx-large;
+}
+
 @media screen and (max-width:400px) {
   .chartBox * {
     background-color: rgb(247, 247, 247);
