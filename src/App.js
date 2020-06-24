@@ -57,8 +57,6 @@ class App extends React.Component {
     html2canvas(document.getElementsByClassName('app')[0]).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('l', 'mm', 'a4');
-      this.state.selected ? 
-      pdf.addImage(imgData, 'PDF', 10, -80, 190, 130):
       pdf.addImage(imgData, 'PDF', 10, 10, 190, 130);
       pdf.save("download.pdf"); 
     });
@@ -99,16 +97,17 @@ class App extends React.Component {
                   onClick={(event) => this.toggleSelected(event)}
                   onMouseOver = {(event) => {event.target.className = event.target.className + ' bold'}}
                   onMouseOut= {(event) => {event.target.className=event.target.className.split(' ').filter(name => name !== 'bold').join (' ')}}
+                  className='fullScreen'
                   >
                     {window.screen.width <= 400 ? 
                       <Doughnut 
                       data={this.dataProcesser(this.state.selected)} 
-                      options={{legend: false, title: {display: true, text: this.state.selected.split('_')
+                      options={{legend: false, maintainAspectRatio: false, title: {display: true, titleFontSize: 16, text: this.state.selected.split('_')
                       .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}}
                       /> :
                       <Doughnut 
                         data={this.dataProcesser(this.state.selected)} 
-                        options={{legend: {position: 'left'}, title: {display: true, text: this.state.selected.split('_')
+                        options={{legend: {position: 'left'}, maintainAspectRatio: false, titleFontSize: 16, title: {display: true, text: this.state.selected.split('_')
                         .map(word => word[0].toUpperCase() + word.slice(1, word.length)).join(' ')}}}
                       />
                     }
